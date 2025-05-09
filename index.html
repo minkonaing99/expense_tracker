@@ -2,274 +2,271 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 
 </head>
 
 <body class="m-0 p-0">
-    <div class="container-fluid">
-        <!-- Navbar -->
-        <nav class="navbar navbar-light bg-light justify-content-center">
-            <div class="d-flex gap-5">
-                <a class="nav-link active fs-4 fw-bold" href="index.html">My Expenses</a>
-                <!-- <a class="nav-link fs-5" href="details.html">Details</a> -->
+  <div class="container-fluid">
+    <!-- Navbar -->
+    <nav class="navbar navbar-light justify-content-center">
+      <div class="d-flex">
+        <a class="nav-link active fs-4 fw-bold" href="index.html">My Expenses</a>
+        <!-- <a class="nav-link fs-5" href="details.html">Details</a> -->
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="col-md-12 p-md-3">
+      <h1 class="fw-bold">Overview</h1>
+      <div class="mx-2 row justify-content-center">
+        <div class="col-md-3 col-6 my-2 d-flex">
+          <div class="card rounded-4 shadow w-100 h-100">
+            <div class="card-body d-flex flex-column justify-content-between">
+              <p class="card-title">Daily Expenses</p>
+              <p class="card-text fs-4 text-end mt-auto" id="daily">THB</p>
             </div>
-        </nav>
-
-        <!-- Main Content -->
-        <div class="col-md-12 p-md-4">
-            <h1 class="fw-bold">Overview</h1>
-            <div class="mx-2 row justify-content-center">
-                <div class="col-md-3 col-6 my-2 d-flex">
-                    <div class="card rounded-4 shadow w-100 h-100">
-                        <div class="card-body d-flex flex-column justify-content-between">
-                            <p class="card-title">Daily Expenses</p>
-                            <p class="card-text fs-4 text-end mt-auto" id="daily">THB</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 my-2 d-flex">
-                    <div class="card rounded-4 shadow w-100 h-100">
-                        <div class="card-body d-flex flex-column justify-content-between">
-                            <p class="card-title">Monthly Expenses</p>
-                            <p class="card-text fs-4 text-end mt-auto" id="monthly">THB</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 my-2 d-flex">
-                    <div class="card rounded-4 shadow w-100 h-100">
-                        <div class="card-body d-flex flex-column justify-content-between">
-                            <p class="card-title">Remaining in Wallet</p>
-                            <p class="card-text fs-4 text-end mt-auto" id="wallet">THB</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 my-2 d-flex">
-                    <div class="card rounded-4 shadow w-100 h-100">
-                        <div class="card-body d-flex flex-column justify-content-between">
-                            <p class="card-title">Total Expenses</p>
-                            <p class="card-text fs-4 text-end mt-auto" id="total_expenses">THB 0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mx-0 my-3 row">
-                <!-- Form Section -->
-                <div class="col-12 col-lg-6 order-0 shadow shadow-md-none p-md-4 py-4 px-2">
-                    <div class="d-flex align-items-center gap-3">
-                        <h2 class="fw-bold m-0" id="formTitle">Add Expenses</h2>
-                        <button class="btn btn-outline-secondary opacity-50" id="toggleFormBtn">Add Wallet</button>
-                    </div>
-
-                    <!-- Wallet Form -->
-                    <div id="walletForm" class="d-none mt-3 mb-1">
-                        <div class="mb-3">
-                            <label for="walletDate">Date</label>
-                            <input type="date" class="form-control" id="walletDate" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="walletInput">Wallet</label>
-                            <input type="text" class="form-control" id="walletInput" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="incomeAmount">Amount</label>
-                            <input type="number" class="form-control" id="incomeAmount" placeholder="THB" min="0"
-                                step="0.01" />
-                        </div>
-                        <button type="button" class="btn btn-primary" id="addWalletBtn">Add Wallet</button>
-                    </div>
-
-                    <!-- Expense Form -->
-                    <div id="expenseForm" class="mt-3">
-                        <div class="mb-3">
-                            <label for="expenseDate">Date</label>
-                            <input type="date" class="form-control" id="expenseDate" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="category">Category</label>
-                            <select class="form-select" id="category">
-                                <option selected disabled value="">Select category</option>
-                                <option>Groceries</option>
-                                <option>Restaurant</option>
-                                <option>Snacks</option>
-                                <option>Rent</option>
-                                <option>Bills</option>
-                                <option>Transport</option>
-                                <option>Education</option>
-                                <option>Lazada Payment</option>
-                                <option>Shopee Payment</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="details">Details</label>
-                            <textarea class="form-control" id="details"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="expenseAmount">Amount</label>
-                            <input type="number" class="form-control" id="expenseAmount" placeholder="THB" min="0"
-                                step="0.01" />
-                        </div>
-                        <button type="button" class="btn btn-primary" id="addExpensesBtn">Add Expenses</button>
-                    </div>
-                </div>
-
-                <!-- Transaction Details -->
-                <div class="my-2 col-12 col-lg-6 shadow shadow-md-none p-2">
-                    <h2 class="fw-bold">Transactions Activity</h2>
-                    <div id="groupedTransactions"></div>
-                    <div class="mt-3">
-                        <div class="bg-secondary linebreak"></div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    </div>
-
-    <!-- Toast -->
-    <div class="toast-container">
-        <div class="toast align-items-center text-bg-success border-0" role="alert" id="successToast"
-            data-bs-delay="1500">
-            <div class="d-flex">
-                <div class="toast-body">Entry added successfully!</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        <div class="col-md-3 col-6 my-2 d-flex">
+          <div class="card rounded-4 shadow w-100 h-100">
+            <div class="card-body d-flex flex-column justify-content-between">
+              <p class="card-title">Monthly Expenses</p>
+              <p class="card-text fs-4 text-end mt-auto" id="monthly">THB</p>
             </div>
+          </div>
         </div>
+        <div class="col-md-3 col-6 my-2 d-flex">
+          <div class="card rounded-4 shadow w-100 h-100">
+            <div class="card-body d-flex flex-column justify-content-between">
+              <p class="card-title">Remaining in Wallet</p>
+              <p class="card-text fs-4 text-end mt-auto" id="wallet">THB</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-6 my-2 d-flex">
+          <div class="card rounded-4 shadow w-100 h-100">
+            <div class="card-body d-flex flex-column justify-content-between">
+              <p class="card-title">Total Expenses</p>
+              <p class="card-text fs-4 text-end mt-auto" id="total_expenses">THB 0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mx-0 my-3 row">
+        <!-- Form Section -->
+        <div class="col-12 col-lg-6 order-0 shadow shadow-md-none p-md-4 py-4 px-2">
+          <div class="d-flex align-items-center gap-3">
+            <h2 class="fw-bold m-0" id="formTitle">Add Expenses</h2>
+            <button class="btn btn-outline-secondary opacity-50" id="toggleFormBtn">Add Wallet</button>
+          </div>
+
+          <!-- Wallet Form -->
+          <div id="walletForm" class="d-none mt-3 mb-1">
+            <div class="mb-3">
+              <label for="walletDate">Date</label>
+              <input type="date" class="form-control" id="walletDate" />
+            </div>
+            <div class="mb-3">
+              <label for="walletInput">Wallet</label>
+              <input type="text" class="form-control" id="walletInput" />
+            </div>
+            <div class="mb-3">
+              <label for="incomeAmount">Amount</label>
+              <input type="number" class="form-control" id="incomeAmount" placeholder="THB" min="0" step="0.01" />
+            </div>
+            <button type="button" class="btn btn-primary" id="addWalletBtn">Add Wallet</button>
+          </div>
+
+          <!-- Expense Form -->
+          <div id="expenseForm" class="mt-3">
+            <div class="mb-3">
+              <label for="expenseDate">Date</label>
+              <input type="date" class="form-control" id="expenseDate" />
+            </div>
+            <div class="mb-3">
+              <label for="category">Category</label>
+              <select class="form-select" id="category">
+                <option selected disabled value="">Select category</option>
+                <option>Groceries</option>
+                <option>Restaurant</option>
+                <option>Snacks</option>
+                <option>Rent</option>
+                <option>Bills</option>
+                <option>Transport</option>
+                <option>Education</option>
+                <option>Lazada Payment</option>
+                <option>Shopee Payment</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="details">Details</label>
+              <textarea class="form-control" id="details"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="expenseAmount">Amount</label>
+              <input type="number" class="form-control" id="expenseAmount" placeholder="THB" min="0" step="0.01" />
+            </div>
+            <button type="button" class="btn btn-primary" id="addExpensesBtn">Add Expenses</button>
+          </div>
+        </div>
+
+        <!-- Transaction Details -->
+        <div class="my-2 col-12 col-lg-6 shadow shadow-md-none p-2">
+          <h2 class="fw-bold">Transactions Activity</h2>
+          <div id="groupedTransactions"></div>
+          <div class="mt-3">
+            <div class="bg-secondary linebreak"></div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-      $(function () {
-  const toast = new bootstrap.Toast($("#successToast")[0]);
-  let isExpenseActive = true;
+  <!-- Toast -->
+  <div class="toast-container">
+    <div class="toast align-items-center text-bg-success border-0" role="alert" id="successToast" data-bs-delay="1500">
+      <div class="d-flex">
+        <div class="toast-body">Entry added successfully!</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
 
-  const $wallet = $("#wallet");
-  const $daily = $("#daily");
-  const $monthly = $("#monthly");
-  const $totalExpenses = $("#total_expenses");
-  const $summaryExpenses = $("#summary_expenses");
-  const $groupedTransactions = $("#groupedTransactions");
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 
-  $("#toggleFormBtn").on("click", function () {
-    isExpenseActive = !isExpenseActive;
-    $("#expenseForm").toggleClass("d-none", !isExpenseActive);
-    $("#walletForm").toggleClass("d-none", isExpenseActive);
-    $("#formTitle").text(isExpenseActive ? "Add Expenses" : "Add Wallet");
-    $(this)
-      .text(isExpenseActive ? "Add Wallet" : "Add Expenses")
-      .toggleClass("opacity-50", isExpenseActive);
-  });
+  <script>
+    $(function () {
+      const toast = new bootstrap.Toast($("#successToast")[0]);
+      let isExpenseActive = true;
 
-  $("#addExpensesBtn").on("click", function (e) {
-    e.preventDefault();
-    let date =
-      $("#expenseDate").val() ||
-      new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0];
-    const category = $("#category").val();
-    const details = $("#details").val();
-    const amount = $("#expenseAmount").val();
+      const $wallet = $("#wallet");
+      const $daily = $("#daily");
+      const $monthly = $("#monthly");
+      const $totalExpenses = $("#total_expenses");
+      const $summaryExpenses = $("#summary_expenses");
+      const $groupedTransactions = $("#groupedTransactions");
 
-    if (!category || !details || !amount) {
-      alert("Please fill in all fields.");
-      return;
-    }
+      $("#toggleFormBtn").on("click", function () {
+        isExpenseActive = !isExpenseActive;
+        $("#expenseForm").toggleClass("d-none", !isExpenseActive);
+        $("#walletForm").toggleClass("d-none", isExpenseActive);
+        $("#formTitle").text(isExpenseActive ? "Add Expenses" : "Add Wallet");
+        $(this)
+          .text(isExpenseActive ? "Add Wallet" : "Add Expenses")
+          .toggleClass("opacity-50", isExpenseActive);
+      });
 
-    $.post(
-      "add_transaction.php",
-      { date, category, details, amount },
-      function () {
-        $("#expenseForm input, #expenseForm textarea, #expenseForm select").val(
-          ""
-        );
-        toast.show();
-        setTimeout(() => location.reload(), 1500);
-      }
-    ).fail(() => alert("Something went wrong."));
-  });
+      $("#addExpensesBtn").on("click", function (e) {
+        e.preventDefault();
+        let date =
+          $("#expenseDate").val() ||
+          new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+            .toISOString()
+            .split("T")[0];
+        const category = $("#category").val();
+        const details = $("#details").val();
+        const amount = $("#expenseAmount").val();
 
-  $("#addWalletBtn").on("click", function (e) {
-    e.preventDefault();
-    let date =
-      $("#walletDate").val() ||
-      new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0];
-    const wallet = $("#walletInput").val();
-    const amount = $("#incomeAmount").val();
+        if (!category || !details || !amount) {
+          alert("Please fill in all fields.");
+          return;
+        }
 
-    if (!wallet || !amount) {
-      alert("Please fill in all fields.");
-      return;
-    }
+        $.post(
+          "add_transaction.php",
+          { date, category, details, amount },
+          function () {
+            $("#expenseForm input, #expenseForm textarea, #expenseForm select").val(
+              ""
+            );
+            toast.show();
+            setTimeout(() => location.reload(), 1500);
+          }
+        ).fail(() => alert("Something went wrong."));
+      });
 
-    $.post("add_wallet.php", { date, wallet, amount }, function () {
-      $("#walletForm input").val("");
-      toast.show();
-      setTimeout(() => location.reload(), 1500);
-    }).fail(() => alert("Something went wrong."));
-  });
+      $("#addWalletBtn").on("click", function (e) {
+        e.preventDefault();
+        let date =
+          $("#walletDate").val() ||
+          new Date(new Date().getTime() + 7 * 60 * 60 * 1000)
+            .toISOString()
+            .split("T")[0];
+        const wallet = $("#walletInput").val();
+        const amount = $("#incomeAmount").val();
 
-  // Data loading
-  let income = 0,
-    total_expense = 0,
-    daily_expense = 0,
-    monthly_expense = 0;
+        if (!wallet || !amount) {
+          alert("Please fill in all fields.");
+          return;
+        }
 
-  // Timezone adjusted to Asia/Bangkok (UTC+7)
-  const today = new Date(new Date().getTime() + 7 * 60 * 60 * 1000);
-  const todayStr = today.toISOString().split("T")[0];
-  const thisMonth = today.getMonth();
-  const thisYear = today.getFullYear();
-  
+        $.post("add_wallet.php", { date, wallet, amount }, function () {
+          $("#walletForm input").val("");
+          toast.show();
+          setTimeout(() => location.reload(), 1500);
+        }).fail(() => alert("Something went wrong."));
+      });
 
-  const parseDate = (str) =>
-    new Date(...str.split("-").map((v, i) => (i === 1 ? +v - 1 : +v)));
+      // Data loading
+      let income = 0,
+        total_expense = 0,
+        daily_expense = 0,
+        monthly_expense = 0;
 
-  const loadIncome = $.getJSON("income.php", (data) => {
-    data.forEach((item) => (income += parseFloat(item.amount)));
-  });
+      // Timezone adjusted to Asia/Bangkok (UTC+7)
+      const today = new Date(new Date().getTime() + 7 * 60 * 60 * 1000);
+      const todayStr = today.toISOString().split("T")[0];
+      const thisMonth = today.getMonth();
+      const thisYear = today.getFullYear();
 
-  const loadExpenses = $.getJSON("expense_table.php", (data) => {
-    const groupedData = {};
-    const dateTotals = {};
-    let index = 1;
 
-    data.forEach((item) => {
-      const date = parseDate(item.date);
-      const dateStr = item.date;
-      const amount = parseFloat(item.amount);
-      total_expense += amount;
+      const parseDate = (str) =>
+        new Date(...str.split("-").map((v, i) => (i === 1 ? +v - 1 : +v)));
 
-      if (!groupedData[dateStr]) {
-        groupedData[dateStr] = [];
-        dateTotals[dateStr] = 0;
-      }
-      groupedData[dateStr].push(item);
-      dateTotals[dateStr] += amount;
-        console.log("Hello world");
-      if (dateStr === todayStr) daily_expense += amount;
-      console.log(daily_expense)
-      if (date.getMonth() === thisMonth && date.getFullYear() === thisYear)
-        monthly_expense += amount;
-    });
+      const loadIncome = $.getJSON("income.php", (data) => {
+        data.forEach((item) => (income += parseFloat(item.amount)));
+      });
 
-    $totalExpenses.text(`THB ${total_expense}`);
-    $summaryExpenses.text(`THB ${total_expense}`);
-    $daily.text(`THB ${daily_expense}`);
-    $monthly.text(`THB ${monthly_expense}`);
+      const loadExpenses = $.getJSON("expense_table.php", (data) => {
+        const groupedData = {};
+        const dateTotals = {};
+        let index = 1;
 
-    let html = "";
-    for (const date in groupedData) {
-      html += `
+        data.forEach((item) => {
+          const date = parseDate(item.date);
+          const dateStr = item.date;
+          const amount = parseFloat(item.amount);
+          total_expense += amount;
+
+          if (!groupedData[dateStr]) {
+            groupedData[dateStr] = [];
+            dateTotals[dateStr] = 0;
+          }
+          groupedData[dateStr].push(item);
+          dateTotals[dateStr] += amount;
+          console.log("Hello world");
+          if (dateStr === todayStr) daily_expense += amount;
+          console.log(daily_expense)
+          if (date.getMonth() === thisMonth && date.getFullYear() === thisYear)
+            monthly_expense += amount;
+        });
+
+        $totalExpenses.text(`THB ${total_expense}`);
+        $summaryExpenses.text(`THB ${total_expense}`);
+        $daily.text(`THB ${daily_expense}`);
+        $monthly.text(`THB ${monthly_expense}`);
+
+        let html = "";
+        for (const date in groupedData) {
+          html += `
         <div class="fw-bold mt-3">
           <div class="bg-secondary linebreak"></div>
           <div class="mt-1">Date: ${date} // Total: THB ${dateTotals[date]}</div>
@@ -281,27 +278,27 @@
           <div class="col fw-bold text-end">Amount</div>
         </div>`;
 
-      groupedData[date].forEach((item) => {
-        html += `
+          groupedData[date].forEach((item) => {
+            html += `
           <div class="row">
             <div class="col-1">${index++}</div>
             <div class="col-3">${item.category}</div>
             <div class="col-5 col-md-4 ">${$("<div>")
-              .text(item.details)
-              .html()}</div>
+                .text(item.details)
+                .html()}</div>
             <div class="col text-end">${parseFloat(item.amount)}</div>
           </div>`;
+          });
+        }
+        $groupedTransactions.html(html);
       });
-    }
-    $groupedTransactions.html(html);
-  });
 
-  $.when(loadIncome, loadExpenses).done(() => {
-    $wallet.text(`THB ${income - total_expense}`);
-  });
-});
- 
-    </script>
+      $.when(loadIncome, loadExpenses).done(() => {
+        $wallet.text(`THB ${income - total_expense}`);
+      });
+    });
+
+  </script>
 </body>
 
 </html>
