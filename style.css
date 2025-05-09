@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    font-family: 'Urbanist', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+/* style.css */
+
+/* Custom column widths */
+.col-date {
+    width: 16.67%;
+}
+
+.col-category {
+    width: 25%;
+}
+
+.col-details {
+    width: 33.33%;
+}
+
+.toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1055;
+}
+
+.linebreak {
+    border: 1px solid #000;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Hide shadow on md and up (desktop) */
+@media (min-width: 768px) {
+    .shadow-md-none {
+        box-shadow: none !important;
+    }
+}
