@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xpenses - Smart Expense Tracker</title>
+    <title>Allowance Management - Xpenses</title>
 
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#667eea">
@@ -21,8 +21,8 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="prefetch" href="key.php" as="fetch" type="application/json">
-    <link rel="prefetch" href="expense_table.php" as="fetch" type="application/json">
-    <link rel="prefetch" href="expense_data.php" as="fetch" type="application/json">
+    <link rel="prefetch" href="allowance_table.php" as="fetch" type="application/json">
+    <link rel="prefetch" href="add_allowance.php" as="fetch" type="application/json">
 </head>
 
 <body>
@@ -48,10 +48,10 @@
                 <nav class="navbar">
                     <a href="index.html" class="logo">Xpenses</a>
                     <div class="nav-actions">
-                        <a href="allowance.html" class="nav-btn">
-                            <img src="icons/wallet.svg" alt="Wallet">
+                        <a href="index.html" class="nav-btn">
+                            <img src="./icons/back.svg" alt="Back">
                         </a>
-                    </div>
+
                 </nav>
             </div>
         </header>
@@ -59,29 +59,29 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="container">
-                <h1 class="page-title">Financial Dashboard</h1>
+                <h1 class="page-title">Allowance Management</h1>
 
                 <!-- Stats Cards -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-title">Daily Expenses</div>
-                        <div class="stat-value" id="daily">0</div>
+                        <div class="stat-title">Total Allowance</div>
+                        <div class="stat-value" id="totalAllowance">0</div>
                         <div class="stat-currency">THB</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-title">Monthly Expenses</div>
-                        <div class="stat-value" id="monthly">0</div>
+                        <div class="stat-title">Total Allowance</div>
+                        <div class="stat-value" id="totalAllowanceMMK">0</div>
+                        <div class="stat-currency">MMK</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">This Month</div>
+                        <div class="stat-value" id="monthlyAllowance">0</div>
                         <div class="stat-currency">THB</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-title">Total Expenses</div>
-                        <div class="stat-value" id="total_expenses">0</div>
-                        <div class="stat-currency">THB</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-title">Daily Change</div>
-                        <div class="stat-value" id="daily_change">0</div>
-                        <div class="stat-currency" id="daily_change_indicator">THB</div>
+                        <div class="stat-title">Total Transfers</div>
+                        <div class="stat-value" id="totalTransfers">0</div>
+                        <div class="stat-currency">Count</div>
                     </div>
                 </div>
 
@@ -89,47 +89,42 @@
                 <div class="content-layout">
                     <!-- Form Section -->
                     <section class="form-section">
-                        <h2 class="section-title">Add New Expense</h2>
-                        <form id="expenseForm">
+                        <h2 class="section-title">Add New Allowance</h2>
+                        <form id="allowanceForm">
                             <div class="form-group">
-                                <label for="expenseDate" class="form-label">Date</label>
-                                <input type="date" class="form-input" id="expenseDate">
+                                <label for="allowanceDate" class="form-label">Date</label>
+                                <input type="date" class="form-input" id="allowanceDate">
                             </div>
                             <div class="form-group">
-                                <label for="category" class="form-label">Category</label>
-                                <select class="form-select" id="category">
-                                    <option value="" disabled selected>Select category</option>
-                                </select>
+                                <label for="amountMMK" class="form-label">Amount (MMK)</label>
+                                <input type="number" class="form-input" id="amountMMK" placeholder="0" min="1" step="1"
+                                    step="1000">
                             </div>
                             <div class="form-group">
-                                <label for="details" class="form-label">Description</label>
-                                <textarea class="form-input" id="details" rows="3"
-                                    placeholder="Enter expense description"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="expenseAmount" class="form-label">Amount</label>
-                                <input type="number" class="form-input" id="expenseAmount" placeholder="0" min="1"
+                                <label for="currencyRate" class="form-label">Currency Rate</label>
+                                <input type="number" class="form-input" id="currencyRate" placeholder="0" min="1"
                                     step="1" step="0.01">
                             </div>
-                            <button type="button" class="btn" id="addExpensesBtn">
+                            <div class="form-group">
+                                <label for="transferBy" class="form-label">Transferred By</label>
+                                <input type="text" class="form-input" id="transferBy" placeholder="Enter sender name">
+                            </div>
+                            <button type="button" class="btn" id="addAllowanceBtn">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <path d="M12 5v14M5 12h14" />
                                 </svg>
-                                Add Expense
+                                Add Allowance
                             </button>
                         </form>
                     </section>
 
-                    <!-- Transactions Section -->
+                    <!-- Allowance History Section -->
                     <section class="transactions-section">
                         <div class="transactions-header">
-                            <h2 class="transactions-title">Recent Transactions</h2>
-                            <button class="download-btn" id="download" title="Download CSV">
-                                <img src="icons/download.svg" alt="Download">
-                            </button>
+                            <h2 class="transactions-title">Allowance History</h2>
                         </div>
-                        <div id="groupedTransactions"></div>
+                        <div id="allowanceHistory"></div>
                     </section>
                 </div>
             </div>
@@ -142,7 +137,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="modal-toast.js"></script>
     <script src="key_check.js"></script>
-    <script src="app.js"></script>
+    <script src="allowance.js"></script>
 
     <!-- Service Worker Registration -->
     <script>
