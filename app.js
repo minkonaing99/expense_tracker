@@ -117,7 +117,9 @@ $(document).ready(function () {
     $("#category").val("");
     $("#details").val("");
     $("#expenseAmount").val("");
-    $("#details").focus();
+
+    // Unfocus all input fields
+    $("#expenseDate, #category, #details, #expenseAmount").blur();
   }
 
   function loadData() {
@@ -307,10 +309,9 @@ $(document).ready(function () {
   function initializeSwipeToDelete() {
     // Remove any existing event handlers to prevent duplicates
     $(document).off("dblclick", ".transaction-item");
-    $(document).off("touchend", ".transaction-item");
     $(document).off("click", ".delete-button");
 
-    // Show delete button on double click for desktop
+    // Show delete button on double click for desktop only
     $(document).on("dblclick", ".transaction-item", function (e) {
       const $item = $(this);
 
@@ -325,31 +326,6 @@ $(document).ready(function () {
       }
 
       e.preventDefault();
-    });
-
-    // Show delete button on double tap for mobile
-    let lastTap = 0;
-    $(document).on("touchend", ".transaction-item", function (e) {
-      const currentTime = new Date().getTime();
-      const tapLength = currentTime - lastTap;
-
-      if (tapLength < 500 && tapLength > 0) {
-        // Double tap detected
-        const $item = $(this);
-
-        // Hide all other delete buttons
-        $(".transaction-item").not($item).removeClass("show-delete");
-
-        // Toggle current item's delete button
-        if ($item.hasClass("show-delete")) {
-          $item.removeClass("show-delete");
-        } else {
-          $item.addClass("show-delete");
-        }
-
-        e.preventDefault();
-      }
-      lastTap = currentTime;
     });
 
     // Hide delete button when clicking outside

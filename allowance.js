@@ -99,7 +99,9 @@ $(document).ready(function () {
     $("#amountMMK").val("");
     $("#currencyRate").val("");
     $("#transferBy").val("");
-    $("#amountMMK").focus();
+
+    // Unfocus all input fields
+    $("#allowanceDate, #amountMMK, #currencyRate, #transferBy").blur();
   }
 
   function loadData() {
