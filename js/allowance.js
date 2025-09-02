@@ -65,7 +65,7 @@ $(document).ready(function () {
     btn.prop("disabled", true);
 
     $.ajax({
-      url: "add_allowance.php",
+      url: "api/add_allowance.php",
       method: "POST",
       data: {
         date: date,
@@ -106,7 +106,7 @@ $(document).ready(function () {
 
   function loadData() {
     $.ajax({
-      url: "allowance_table.php",
+      url: "api/allowance_table.php",
       method: "GET",
       dataType: "json",
       success: function (data) {

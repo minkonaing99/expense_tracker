@@ -19,10 +19,10 @@
     <link rel="apple-touch-icon" href="image/icon-192.png">
     <link rel="manifest" href="manifest.json">
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="prefetch" href="key.php" as="fetch" type="application/json">
-    <link rel="prefetch" href="allowance_table.php" as="fetch" type="application/json">
-    <link rel="prefetch" href="add_allowance.php" as="fetch" type="application/json">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="prefetch" href="api/key.php" as="fetch" type="application/json">
+    <link rel="prefetch" href="api/allowance_table.php" as="fetch" type="application/json">
+    <link rel="prefetch" href="api/add_allowance.php" as="fetch" type="application/json">
 </head>
 
 <body>
@@ -33,7 +33,8 @@
             <form id="keyForm">
                 <div class="form-group">
                     <label for="keyInput" class="form-label">Enter Access Key</label>
-                    <input type="password" class="form-input" id="keyInput" placeholder="Enter your access key">
+                    <input type="password" class="form-input" id="keyInput" placeholder="Enter your access key"
+                        autocomplete="off">
                 </div>
                 <button type="button" class="btn" id="submitKey">Access Dashboard</button>
             </form>
@@ -135,24 +136,11 @@
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="modal-toast.js"></script>
-    <script src="key_check.js"></script>
-    <script src="allowance.js"></script>
+    <script src="js/modal-toast.js"></script>
+    <script src="js/key_check.js"></script>
+    <script src="js/allowance.js"></script>
 
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then((registration) => {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch((registrationError) => {
-                        console.log('SW registration failed: ', registrationError);
-                    });
-            });
-        }
-    </script>
+
 </body>
 
 </html>

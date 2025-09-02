@@ -10,8 +10,8 @@ ini_set('display_errors', 0);
 header('Content-Type: application/json');
 
 $correctKey = "merxy";
-$cookieName = "access_key";
-$cookieValue = "Tkhantnaing1";
+$cookieName = "xpenses_access";
+$cookieValue = "granted";
 
 // Already has access
 if (isset($_COOKIE[$cookieName]) && $_COOKIE[$cookieName] === $cookieValue) {

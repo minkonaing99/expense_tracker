@@ -20,7 +20,7 @@ $(document).ready(function () {
     btn.prop("disabled", true);
 
     $.ajax({
-      url: "key.php",
+      url: "api/key.php",
       method: "POST",
       data: { key: key },
       dataType: "json",
@@ -32,6 +32,8 @@ $(document).ready(function () {
             $("#mainContent").show();
             // Trigger fade-in animation
             $("#mainContent").addClass("fade-in-up");
+            // Trigger data loading after access is granted
+            triggerDataLoading();
           }, 1000);
         } else {
           showError(result.message || "Invalid access key");
@@ -56,26 +58,54 @@ $(document).ready(function () {
   });
 
   function checkAccessStatus() {
+    console.log("Checking access status...");
     $.ajax({
-      url: "key.php",
+      url: "api/key.php",
       method: "POST",
       data: { key: "" }, // Empty key to trigger cookie check
       dataType: "json",
       success: function (result) {
+        console.log("Access check result:", result);
         if (result.success) {
+          console.log("Access granted, showing content...");
           // User already has access, show main content
           $("#mainContent").show();
           $("#mainContent").addClass("fade-in-up");
+          // Trigger data loading after access is confirmed
+          triggerDataLoading();
         } else {
+          console.log("Access denied, showing key modal...");
           // User needs to enter key, show modal
           keyModal.show();
         }
       },
-      error: function () {
+      error: function (xhr, status, error) {
+        console.log("Access check error:", error);
         // On error, show modal as fallback
         keyModal.show();
       },
     });
+  }
+
+  function triggerDataLoading() {
+    console.log("Triggering data loading...");
+    // Trigger data loading for different page types
+    if (typeof loadData === "function") {
+      console.log("Loading main page data...");
+      // Main page - load transactions and categories
+      loadData();
+      loadCategories();
+      // Apply default filter for transaction history
+      setTimeout(() => {
+        filterOlderTransactions("week");
+      }, 100);
+    }
+
+    if (typeof ExpenseCharts !== "undefined" && window.chartsInstance) {
+      console.log("Loading chart data...");
+      // Chart page - load chart data
+      window.chartsInstance.loadChartData();
+    }
   }
 
   function showSuccess(message) {

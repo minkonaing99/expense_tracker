@@ -19,10 +19,9 @@
     <link rel="apple-touch-icon" href="image/icon-192.png">
     <link rel="manifest" href="manifest.json">
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="prefetch" href="key.php" as="fetch" type="application/json">
-    <link rel="prefetch" href="expense_table.php" as="fetch" type="application/json">
-    <link rel="prefetch" href="expense_data.php" as="fetch" type="application/json">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="prefetch" href="api/key.php" as="fetch" type="application/json">
+
 </head>
 
 <body>
@@ -33,7 +32,8 @@
             <form id="keyForm">
                 <div class="form-group">
                     <label for="keyInput" class="form-label">Enter Access Key</label>
-                    <input type="password" class="form-input" id="keyInput" placeholder="Enter your access key">
+                    <input type="password" class="form-input" id="keyInput" placeholder="Enter your access key"
+                        autocomplete="off">
                 </div>
                 <button type="button" class="btn" id="submitKey">Access Dashboard</button>
             </form>
@@ -50,6 +50,9 @@
                     <div class="nav-actions">
                         <a href="allowance.html" class="nav-btn">
                             <img src="icons/wallet.svg" alt="Wallet">
+                        </a>
+                        <a href="chart.html" class="nav-btn">
+                            <img src="icons/chart.svg" alt="Chart">
                         </a>
                     </div>
                 </nav>
@@ -132,6 +135,23 @@
                         <div id="groupedTransactions"></div>
                     </section>
                 </div>
+
+                <!-- Older Transactions Section -->
+                <section class="older-transactions-section">
+                    <div class="transactions-header">
+                        <h2 class="transactions-title">Transaction History</h2>
+                        <div class="date-filter">
+                            <label for="historyDateRange" class="form-label">Show transactions from:</label>
+                            <select id="historyDateRange" class="form-select">
+                                <option value="week" selected>Last 7 days</option>
+                                <option value="month">Last 30 days</option>
+                                <option value="quarter">Last 90 days</option>
+                                <option value="all">All time</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="olderTransactions"></div>
+                </section>
             </div>
         </main>
     </div>
@@ -140,24 +160,11 @@
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="modal-toast.js"></script>
-    <script src="key_check.js"></script>
-    <script src="app.js"></script>
+    <script src="js/modal-toast.js"></script>
+    <script src="js/key_check.js"></script>
+    <script src="js/app.js"></script>
 
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then((registration) => {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch((registrationError) => {
-                        console.log('SW registration failed: ', registrationError);
-                    });
-            });
-        }
-    </script>
+
 </body>
 
 </html>

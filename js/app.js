@@ -1,4 +1,4 @@
-$(document).ready(function () {
+﻿$(document).ready(function () {
   // Set today's date as default (Thailand timezone)
   const today = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD format
   $("#expenseDate").val(today);
@@ -6,6 +6,11 @@ $(document).ready(function () {
   // Load initial data
   loadData();
   loadCategories();
+
+  // Apply default filter for transaction history
+  setTimeout(() => {
+    filterOlderTransactions("week");
+  }, 100);
 
   // Event listeners
   $("#addExpensesBtn").click(addExpense);
@@ -83,7 +88,7 @@ $(document).ready(function () {
     btn.prop("disabled", true);
 
     $.ajax({
-      url: "add_transaction.php",
+      url: "api/add_transaction.php",
       method: "POST",
       data: {
         date: date,
@@ -124,7 +129,7 @@ $(document).ready(function () {
 
   function loadData() {
     $.ajax({
-      url: "expense_table.php",
+      url: "api/expense_table.php",
       method: "GET",
       dataType: "json",
       success: function (data) {
@@ -143,7 +148,7 @@ $(document).ready(function () {
 
   function refreshTransactionsOnly() {
     $.ajax({
-      url: "expense_table.php",
+      url: "api/expense_table.php",
       method: "GET",
       dataType: "json",
       success: function (data) {
@@ -158,13 +163,32 @@ $(document).ready(function () {
     });
   }
 
+  // Global variables for pagination
+  let allTransactions = [];
+  let originalTransactions = []; // Keep original data for filtering
+  let currentPage = 1;
+  const transactionsPerPage = 30;
+
   function displayTransactions(transactions) {
-    const container = $("#groupedTransactions");
-    container.empty();
+    const recentContainer = $("#groupedTransactions");
+    const olderContainer = $("#olderTransactions");
+
+    recentContainer.empty();
+    olderContainer.empty();
+
+    // Store all transactions globally for pagination
+    allTransactions = transactions;
+    // Store original transactions for filtering (only if not already stored)
+    if (originalTransactions.length === 0) {
+      originalTransactions = [...transactions];
+    }
 
     if (!transactions || transactions.length === 0) {
-      container.html(
+      recentContainer.html(
         '<div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.6);">No transactions yet</div>'
+      );
+      olderContainer.html(
+        '<div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.6);">No older transactions</div>'
       );
       return;
     }
@@ -190,24 +214,102 @@ $(document).ready(function () {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toLocaleDateString("en-CA");
 
-    sortedDates.forEach((date, index) => {
+    // Separate recent and older transactions
+    const recentDates = [];
+    const olderDates = [];
+
+    sortedDates.forEach((date) => {
+      if (date === today || date === yesterdayStr) {
+        recentDates.push(date);
+      } else {
+        olderDates.push(date);
+      }
+    });
+
+    // Display recent transactions (today and yesterday)
+    displayRecentTransactions(recentDates, grouped, recentContainer);
+
+    // Display older transactions with pagination
+    displayOlderTransactions(olderDates, grouped, olderContainer);
+  }
+
+  function displayRecentTransactions(dates, grouped, container) {
+    dates.forEach((date) => {
       const dayTransactions = grouped[date];
       const total = dayTransactions.reduce(
         (sum, t) => sum + parseFloat(t.amount),
         0
       );
 
-      // Check if this is today or yesterday
-      const isRecent = date === today || date === yesterdayStr;
-
-      if (isRecent) {
-        // Show today and yesterday normally
-        const groupHtml = `
-          <div class="transaction-group">
-            <div class="group-header">
-              <div class="group-date">${formatDate(date)}</div>
-              <div class="group-total">${Math.round(total)} THB</div>
+      const groupHtml = `
+        <div class="transaction-group">
+          <div class="group-header">
+            <div class="group-date">${formatDate(date)}</div>
+            <div class="group-total">${Math.round(total)} THB</div>
+          </div>
+          ${dayTransactions
+            .map(
+              (transaction) => `
+              <div class="transaction-item" data-id="${transaction.trans_id}">
+                <div class="transaction-content">
+                  <div class="transaction-details">
+                    <div class="transaction-info">
+                      <div class="transaction-category">${
+                        transaction.category
+                      }</div>
+                      <div class="transaction-description">${
+                        transaction.details
+                      }</div>
+                    </div>
+                    <div class="transaction-amount">${Math.round(
+                      parseFloat(transaction.amount)
+                    )} THB</div>
+                  </div>
+                </div>
+                <div class="delete-button" data-id="${transaction.trans_id}">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"/>
+                  </svg>
+                </div>
+              </div>
+            `
+            )
+            .join("")}
             </div>
+      `;
+      container.append(groupHtml);
+    });
+  }
+
+  function displayOlderTransactions(dates, grouped, container) {
+    if (dates.length === 0) {
+      container.html(
+        '<div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.6);">No older transactions</div>'
+      );
+      return;
+    }
+
+    // Reset pagination
+    currentPage = 1;
+
+    // Show first 30 days
+    const datesToShow = dates.slice(0, transactionsPerPage);
+    const hasMore = dates.length > transactionsPerPage;
+
+    datesToShow.forEach((date) => {
+      const dayTransactions = grouped[date];
+      const total = dayTransactions.reduce(
+        (sum, t) => sum + parseFloat(t.amount),
+        0
+      );
+
+      const groupHtml = `
+        <div class="transaction-group collapsed">
+          <div class="group-header dropdown-header" data-date="${date}">
+            <div class="group-date">${formatDate(date)}</div>
+            <div class="group-total">${Math.round(total)} THB</div>
+          </div>
+          <div class="dropdown-content" data-date="${date}" style="display: none;">
             ${dayTransactions
               .map(
                 (transaction) => `
@@ -227,84 +329,49 @@ $(document).ready(function () {
                       )} THB</div>
                     </div>
                   </div>
-                  <div class="delete-button" data-id="${transaction.trans_id}">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"/>
-                    </svg>
-                  </div>
                 </div>
               `
               )
               .join("")}
-              </div>
-        `;
-        container.append(groupHtml);
-      } else {
-        // Show older dates as collapsible dropdowns
-        const groupHtml = `
-          <div class="transaction-group collapsed">
-            <div class="group-header dropdown-header" data-date="${date}">
-              <div class="group-date">${formatDate(date)}</div>
-              <div class="group-total">${Math.round(total)} THB</div>
-            </div>
-            <div class="dropdown-content" data-date="${date}" style="display: none;">
-              ${dayTransactions
-                .map(
-                  (transaction) => `
-                  <div class="transaction-item" data-id="${
-                    transaction.trans_id
-                  }">
-                    <div class="transaction-content">
-                      <div class="transaction-details">
-                        <div class="transaction-info">
-                          <div class="transaction-category">${
-                            transaction.category
-                          }</div>
-                          <div class="transaction-description">${
-                            transaction.details
-                          }</div>
-                        </div>
-                        <div class="transaction-amount">${Math.round(
-                          parseFloat(transaction.amount)
-                        )} THB</div>
-                      </div>
-                    </div>
-                    <div class="delete-button" data-id="${
-                      transaction.trans_id
-                    }">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"/>
-                      </svg>
-                    </div>
-                  </div>
-                `
-                )
-                .join("")}
-            </div>
-              </div>
-            `;
-        container.append(groupHtml);
-      }
+          </div>
+        </div>
+      `;
+      container.append(groupHtml);
     });
 
-    // Add click handlers for dropdown headers (entire line)
-    $(".dropdown-header").click(function () {
-      const date = $(this).data("date");
-      const content = $(`.dropdown-content[data-date="${date}"]`);
-      const header = $(this);
-
-      if (content.is(":visible")) {
-        content.hide();
-        header.closest(".transaction-group").addClass("collapsed");
-      } else {
-        content.show();
-        header.closest(".transaction-group").removeClass("collapsed");
-      }
-    });
-
-    // Initialize swipe functionality for transaction items
-    initializeSwipeToDelete();
+    // Add Load More button if there are more transactions
+    if (hasMore) {
+      const loadMoreHtml = `
+        <div class="load-more-container" style="text-align: center; margin-top: 2rem;">
+          <button class="btn btn-secondary" id="loadMoreBtn">
+            Load More Transactions
+            <span id="remainingCount">(${
+              dates.length - transactionsPerPage
+            } more)</span>
+          </button>
+        </div>
+      `;
+      container.append(loadMoreHtml);
+    }
   }
+
+  // Use event delegation for dynamically added elements
+  $(document).on("click", ".dropdown-header", function () {
+    const date = $(this).data("date");
+    const content = $(`.dropdown-content[data-date="${date}"]`);
+    const header = $(this);
+
+    if (content.is(":visible")) {
+      content.hide();
+      header.closest(".transaction-group").addClass("collapsed");
+    } else {
+      content.show();
+      header.closest(".transaction-group").removeClass("collapsed");
+    }
+  });
+
+  // Initialize swipe functionality for transaction items
+  initializeSwipeToDelete();
 
   function initializeSwipeToDelete() {
     // Remove any existing event handlers to prevent duplicates
@@ -409,7 +476,7 @@ $(document).ready(function () {
   function deleteTransaction(transactionId) {
     if (confirm("Are you sure you want to delete this transaction?")) {
       $.ajax({
-        url: "delete_transaction.php",
+        url: "api/delete_transaction.php",
         type: "POST",
         data: { id: transactionId },
         dataType: "json",
@@ -518,7 +585,7 @@ $(document).ready(function () {
 
   function downloadCSV() {
     $.ajax({
-      url: "expense_data.php",
+      url: "api/expense_data.php",
       method: "GET",
       dataType: "json",
       success: function (data) {
@@ -566,5 +633,137 @@ $(document).ready(function () {
 
   function showError(message) {
     showToast(message, "error");
+  }
+
+  // Handle history date range filter
+  $("#historyDateRange").change(function () {
+    const selectedRange = $(this).val();
+    filterOlderTransactions(selectedRange);
+  });
+
+  function filterOlderTransactions(range) {
+    if (!originalTransactions || originalTransactions.length === 0) {
+      return;
+    }
+
+    let filteredTransactions = originalTransactions;
+
+    if (range !== "all") {
+      const days =
+        range === "week"
+          ? 7
+          : range === "month"
+          ? 30
+          : range === "quarter"
+          ? 90
+          : 0;
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - days);
+
+      filteredTransactions = originalTransactions.filter((transaction) => {
+        const transactionDate = new Date(transaction.date);
+        return transactionDate >= cutoffDate;
+      });
+    }
+
+    // Re-display transactions with the filtered data
+    displayTransactions(filteredTransactions);
+  }
+
+  // Handle Load More button
+  $(document).on("click", "#loadMoreBtn", function () {
+    loadMoreTransactions();
+  });
+
+  function loadMoreTransactions() {
+    // Get all transactions and group them by date
+    const grouped = {};
+    originalTransactions.forEach((transaction) => {
+      const date = transaction.date;
+      if (!grouped[date]) {
+        grouped[date] = [];
+      }
+      grouped[date].push(transaction);
+    });
+
+    // Sort dates in descending order
+    const sortedDates = Object.keys(grouped).sort(
+      (a, b) => new Date(b) - new Date(a)
+    );
+
+    // Get today and yesterday dates
+    const today = new Date().toLocaleDateString("en-CA");
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toLocaleDateString("en-CA");
+
+    // Get older dates (excluding today and yesterday)
+    const olderDates = sortedDates.filter(
+      (date) => date !== today && date !== yesterdayStr
+    );
+
+    // Calculate how many more to show
+    const currentlyShowing = currentPage * transactionsPerPage;
+    const nextBatch = olderDates.slice(
+      currentlyShowing,
+      currentlyShowing + transactionsPerPage
+    );
+    const remaining =
+      olderDates.length - currentlyShowing - transactionsPerPage;
+
+    // Add the next batch of transactions
+    nextBatch.forEach((date) => {
+      const dayTransactions = grouped[date];
+      const total = dayTransactions.reduce(
+        (sum, t) => sum + parseFloat(t.amount),
+        0
+      );
+
+      const groupHtml = `
+        <div class="transaction-group collapsed">
+          <div class="group-header dropdown-header" data-date="${date}">
+            <div class="group-date">${formatDate(date)}</div>
+            <div class="group-total">${Math.round(total)} THB</div>
+          </div>
+          <div class="dropdown-content" data-date="${date}" style="display: none;">
+            ${dayTransactions
+              .map(
+                (transaction) => `
+                <div class="transaction-item" data-id="${transaction.trans_id}">
+                  <div class="transaction-content">
+                    <div class="transaction-details">
+                      <div class="transaction-info">
+                        <div class="transaction-category">${
+                          transaction.category
+                        }</div>
+                        <div class="transaction-description">${
+                          transaction.details
+                        }</div>
+                      </div>
+                      <div class="transaction-amount">${Math.round(
+                        parseFloat(transaction.amount)
+                      )} THB</div>
+                    </div>
+                  </div>
+                </div>
+              `
+              )
+              .join("")}
+          </div>
+        </div>
+      `;
+
+      // Insert before the Load More button
+      $("#loadMoreBtn").parent().before(groupHtml);
+    });
+
+    // Update the Load More button or remove it
+    if (remaining > 0) {
+      $("#remainingCount").text(`(${remaining} more)`);
+    } else {
+      $("#loadMoreBtn").parent().remove();
+    }
+
+    currentPage++;
   }
 });
